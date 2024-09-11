@@ -17,4 +17,6 @@ router.post('/google-login', authController.postGoogleLogin);
 router.post('/kakao-login', authController.postKakaoAuth);
 router.post('/naver-login', authController.postNaverLogin);
 
+router.post('/test-token', authController.postNaverLogin);
+
 module.exports = router;
