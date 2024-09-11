@@ -137,3 +137,33 @@ exports.postKakaoAuth = (req, res) => {
 exports.postNaverLogin = (req, res) => {
     authService.handleSocialLogin(req, res, 'Naver');
 };
+
+const tokenUtil = require('../utils/tokenUtil');
+exports.postTestToken = async (req, res) => {
+    try {
+        const accessToken = tokenUtil.genAccessToken(user.userId);
+        const refreshToken = tokenUtil.genRefreshToken();
+        const fooResponse = {
+            error: false,
+            statusCode: 200,
+            message: 'Login successful',
+            data: {
+                user: {
+                    userId: user.userId,
+                    username: user.username,
+                    image: user.profilePhoto,
+                    status_message: user.statusMessage,
+                },
+                accessToken,
+                refreshToken,
+            },
+        };
+        const { error, statusCode, message, data } = fooResponse;
+        if (error) {
+            return sendErrorResponse(res, statusCode, message);
+        }
+        return generateAuthResponse(res, 200, accessToken, refreshToken, data.user);
+    } catch (error) {
+        return sendErrorResponse(res, 500, 'Server error');
+    }
+};
