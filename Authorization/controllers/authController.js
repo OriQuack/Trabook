@@ -141,7 +141,7 @@ exports.postNaverLogin = (req, res) => {
 const tokenUtil = require('../utils/tokenUtil');
 exports.postTestToken = async (req, res) => {
     try {
-        const accessToken = tokenUtil.genAccessToken(user.userId);
+        const accessToken = tokenUtil.genAccessToken('12345');
         const refreshToken = tokenUtil.genRefreshToken();
         const fooResponse = {
             error: false,
@@ -149,10 +149,10 @@ exports.postTestToken = async (req, res) => {
             message: 'Login successful',
             data: {
                 user: {
-                    userId: user.userId,
-                    username: user.username,
-                    image: user.profilePhoto,
-                    status_message: user.statusMessage,
+                    userId: '12345',
+                    username: 'test username',
+                    image: 'testProfile.com',
+                    status_message: 'test status message',
                 },
                 accessToken,
                 refreshToken,
