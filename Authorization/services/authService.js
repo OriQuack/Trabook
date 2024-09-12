@@ -249,6 +249,27 @@ exports.renewToken = async (userId, refreshToken) => {
     }
 };
 
+exports.getUserData = async (userId) => {
+    const user = await User.getUserByUserId(userId);
+    if (!user) {
+        return { error: true, statusCode: 404, message: 'User not found', data: null };
+    }
+
+    return {
+        error: false,
+        statusCode: 200,
+        message: 'Fetch successful',
+        data: {
+            user: {
+                userId: user.userId,
+                username: user.username,
+                image: user.profilePhoto,
+                status_message: user.statusMessage,
+            },
+        },
+    };
+}
+
 exports.handleSocialLogin = async (req, res, provider) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();

@@ -126,6 +126,20 @@ exports.getNewAccessToken = async (req, res, next) => {
     }
 };
 
+exports.getUserData = async (req, res, next) => {
+    const { userId } = req.body;
+    try {
+        const { error, statusCode, message, data } = await authService.getUserData(userId);
+        if (error) {
+            return sendErrorResponse(res, statusCode, message);
+        }
+        const { user } = data;
+        return res.status(200).json({ user: user });
+    } catch (error) {
+        return sendErrorResponse(res, 500, 'Server error');
+    }
+};
+
 exports.postGoogleLogin = (req, res) => {
     authService.handleSocialLogin(req, res, 'Google');
 };
