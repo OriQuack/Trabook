@@ -13,7 +13,7 @@ router.post('/update-profile', authenticate, uploadImage, authController.postUpd
 router.post('/update-password', authenticate, authController.postUpdatePassword);
 router.delete('/delete-user', authenticate, authController.deleteUserData);
 router.get('/renew-token', authenticate, authController.getNewAccessToken);
-router.get('/fetch-user/:userId', authController.getUserData);
+router.get('/fetch-user', authController.getUserData);
 router.post('/google-login', authController.postGoogleLogin);
 router.post('/kakao-login', authController.postKakaoAuth);
 router.post('/naver-login', authController.postNaverLogin);
