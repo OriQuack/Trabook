@@ -127,7 +127,7 @@ exports.getNewAccessToken = async (req, res, next) => {
 };
 
 exports.getUserData = async (req, res, next) => {
-    const { userId } = req.body;
+    const { userId } = req.params;
     try {
         const { error, statusCode, message, data } = await authService.getUserData(userId);
         if (error) {
