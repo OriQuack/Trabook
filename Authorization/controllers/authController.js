@@ -8,8 +8,8 @@ exports.postLogin = async (req, res, next) => {
         if (error) {
             return sendErrorResponse(res, statusCode, message);
         }
-        const { accessToken, refreshToken, user } = data;
-        return generateAuthResponse(res, 200, accessToken, refreshToken, user);
+        const { accessToken, user } = data;
+        return generateAuthResponse(res, 200, accessToken, user);
     } catch (error) {
         return sendErrorResponse(res, 500, 'Server error');
     }
@@ -26,8 +26,8 @@ exports.postSignup = async (req, res, next) => {
         if (error) {
             return sendErrorResponse(res, statusCode, message);
         }
-        const { accessToken, refreshToken, user } = data;
-        return generateAuthResponse(res, 201, accessToken, refreshToken, user);
+        const { accessToken, user } = data;
+        return generateAuthResponse(res, 201, accessToken, user);
     } catch (error) {
         return sendErrorResponse(res, 500, 'Server error');
     }
@@ -120,7 +120,7 @@ exports.getNewAccessToken = async (req, res, next) => {
             return sendErrorResponse(res, statusCode, message);
         }
         const { accessToken } = data;
-        return generateAuthResponse(res, 200, accessToken, refreshToken, { userId: userId });
+        return generateAuthResponse(res, 200, accessToken, { userId: userId });
     } catch (err) {
         return sendErrorResponse(res, 500, 'Server error');
     }
@@ -156,7 +156,6 @@ const tokenUtil = require('../utils/tokenUtil');
 exports.postTestToken = async (req, res) => {
     try {
         const accessToken = tokenUtil.genAccessToken('12345');
-        const refreshToken = tokenUtil.genRefreshToken();
         const fooResponse = {
             error: false,
             statusCode: 200,
@@ -169,14 +168,13 @@ exports.postTestToken = async (req, res) => {
                     status_message: 'test status message',
                 },
                 accessToken,
-                refreshToken,
             },
         };
         const { error, statusCode, message, data } = fooResponse;
         if (error) {
             return sendErrorResponse(res, statusCode, message);
         }
-        return generateAuthResponse(res, 200, accessToken, refreshToken, data.user);
+        return generateAuthResponse(res, 200, accessToken, data.user);
     } catch (error) {
         return sendErrorResponse(res, 500, 'Server error');
     }

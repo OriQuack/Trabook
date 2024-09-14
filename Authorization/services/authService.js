@@ -36,7 +36,6 @@ exports.login = async (email, password) => {
                 status_message: user.statusMessage,
             },
             accessToken,
-            refreshToken,
         },
     };
 };
@@ -69,7 +68,6 @@ exports.signup = async (email, password, username) => {
             data: {
                 user: { userId, username },
                 accessToken,
-                refreshToken,
             },
         };
     } catch (err) {
@@ -213,38 +211,9 @@ exports.deleteUser = async (user) => {
     }
 };
 
-exports.renewToken = async (userId, refreshToken) => {
-    try {
-        jwt.verify(
-            refreshToken,
-            process.env.REFRESH_TOKEN_SECRET,
-            {
-                complete: true,
-                algorithms: ['HS256'],
-                clockTolerance: 0,
-                ignoreExpiration: false,
-                ignoreNotBefore: false,
-            },
-            async (err, refreshDecoded) => {
-                if (err) {
-                    return {
-                        error: true,
-                        statusCode: 403,
-                        message: 'RT invalid or expired',
-                        data: null,
-                    };
-                }
-
-                const newAccessToken = tokenUtil.genAccessToken(userId);
-                return {
-                    error: false,
-                    statusCode: 200,
-                    message: 'Renewed access token',
-                    data: { accessToken: newAccessToken },
-                };
-            }
-        );
-    } catch (err) {
+exports.renewToken = async (userId) => {
+    const refreshToken = redisUtil.getRefreshToken(userId);
+    if (!refreshToken) {
         return {
             error: true,
             statusCode: 403,
@@ -252,6 +221,36 @@ exports.renewToken = async (userId, refreshToken) => {
             data: null,
         };
     }
+
+    jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            complete: true,
+            algorithms: ['HS256'],
+            clockTolerance: 0,
+            ignoreExpiration: false,
+            ignoreNotBefore: false,
+        },
+        async (err, refreshDecoded) => {
+            if (err) {
+                return {
+                    error: true,
+                    statusCode: 403,
+                    message: 'RT invalid or expired',
+                    data: null,
+                };
+            }
+
+            const newAccessToken = tokenUtil.genAccessToken(userId);
+            return {
+                error: false,
+                statusCode: 200,
+                message: 'Renewed access token',
+                data: { accessToken: newAccessToken },
+            };
+        }
+    );
 };
 
 exports.getUserData = async (userId) => {
@@ -298,7 +297,6 @@ exports.handleSocialLogin = async (req, res, provider) => {
                 res,
                 201,
                 accessToken,
-                refreshToken,
                 newUserDetails
             );
         }
@@ -309,7 +307,7 @@ exports.handleSocialLogin = async (req, res, provider) => {
 
         await connection.commit();
 
-        return responseUtil.generateAuthResponse(res, 200, accessToken, refreshToken, {
+        return responseUtil.generateAuthResponse(res, 200, accessToken, {
             userId: user.userId,
             username: user.username,
             image: user.profilePhoto,
