@@ -22,6 +22,8 @@ exports.login = async (email, password) => {
 
     const accessToken = tokenUtil.genAccessToken(user.userId);
     const refreshToken = tokenUtil.genRefreshToken();
+    redisUtil.storeRefreshToken(user.userId, refreshToken);
+
     return {
         error: false,
         statusCode: 200,
@@ -56,6 +58,7 @@ exports.signup = async (email, password, username) => {
 
         const accessToken = tokenUtil.genAccessToken(userId);
         const refreshToken = tokenUtil.genRefreshToken();
+        redisUtil.storeRefreshToken(userId, refreshToken);
 
         await connection.commit();
 
@@ -85,7 +88,9 @@ exports.sendVerificationCode = async (email) => {
     const verificationCode = Math.floor(Math.random() * 100000000)
         .toString()
         .padStart(8, '0');
-    await redisUtil.set(email, verificationCode, { EX: 900 });
+
+    redisUtil.storeEmailVerification(email, verificationCode);
+
     const emailSent = await emailService.sendVerificationEmail(email, verificationCode);
     if (!emailSent) {
         return { error: true, statusCode: 500, message: 'Failed to send email', data: null };
@@ -99,7 +104,7 @@ exports.sendVerificationCode = async (email) => {
 };
 
 exports.verifyCode = async (email, code) => {
-    const storedCode = await redisUtil.get(email);
+    const storedCode = await redisUtil.getEmailVerificationCode(email);
     if (!storedCode || storedCode !== code) {
         return { error: true, statusCode: 400, message: 'Invalid code', data: null };
     }
@@ -268,7 +273,7 @@ exports.getUserData = async (userId) => {
             },
         },
     };
-}
+};
 
 exports.handleSocialLogin = async (req, res, provider) => {
     const connection = await db.getConnection();
@@ -287,6 +292,8 @@ exports.handleSocialLogin = async (req, res, provider) => {
             const newUserDetails = await socialAuthService.createUser(email, connection);
             const accessToken = tokenUtil.genAccessToken(newUserDetails.userId);
             const refreshToken = tokenUtil.genRefreshToken();
+            redisUtil.storeRefreshToken(newUserDetails.userId, refreshToken);
+
             return responseUtil.generateAuthResponse(
                 res,
                 201,
@@ -298,6 +305,7 @@ exports.handleSocialLogin = async (req, res, provider) => {
 
         const accessToken = tokenUtil.genAccessToken(user.userId);
         const refreshToken = tokenUtil.genRefreshToken();
+        redisUtil.storeRefreshToken(user.userId, refreshToken);
 
         await connection.commit();
 
