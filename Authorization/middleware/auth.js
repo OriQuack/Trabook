@@ -9,8 +9,9 @@ const authenticate = async (req, res, next) => {
         return res.status(404).json({ message: 'User not found' });
     }
 
-    const refreshToken = await redisUtil.getRefreshToken(userId).split(':')[1];
-
+    const refreshToken = await redisUtil.getRefreshToken(userId);
+    console.log(refreshToken);
+    console.log(refreshToken.split(':')[1]);
     if (!refreshToken) {
         return res.status(403).json({ message: 'RT invalid or expired1' });
     }
