@@ -2,6 +2,7 @@ const authService = require('../services/authService');
 const { sendErrorResponse, generateAuthResponse } = require('../utils/responseUtil');
 
 exports.postLogin = async (req, res, next) => {
+    console.log(req);
     const { email, password } = req.body;
     try {
         const { error, statusCode, message, data } = await authService.login(email, password);
