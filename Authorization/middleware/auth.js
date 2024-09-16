@@ -4,9 +4,12 @@ const redisUtil = require('../utils/redisUtil');
 
 const authenticate = async (req, res, next) => {
     const userId = req.headers['userid'];
+    if (userId == -1) {
+        return res.status(403).json({ message: 'AT required' });
+    }
     const user = await User.getUserByUserId(userId);
     if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ userId: userId, message: 'User not found' });
     }
 
     const refreshToken = await redisUtil.getRefreshToken(userId);
