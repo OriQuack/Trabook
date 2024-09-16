@@ -2,6 +2,7 @@ const User = require('../models/user');
 const redisUtil = require('../utils/redisUtil');
 
 const authenticate = async (req, res, next) => {
+    console.log(req.headers);
     const userId = req.headers['userId'];
     const user = await User.getUserByUserId(userId);
     if (!user) {
