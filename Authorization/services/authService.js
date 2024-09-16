@@ -212,45 +212,13 @@ exports.deleteUser = async (user) => {
 };
 
 exports.renewToken = async (userId) => {
-    const refreshToken = redisUtil.getRefreshToken(userId);
-    if (!refreshToken) {
-        return {
-            error: true,
-            statusCode: 403,
-            message: 'RT invalid or expired',
-            data: null,
-        };
-    }
-
-    jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
-        {
-            complete: true,
-            algorithms: ['HS256'],
-            clockTolerance: 0,
-            ignoreExpiration: false,
-            ignoreNotBefore: false,
-        },
-        async (err, refreshDecoded) => {
-            if (err) {
-                return {
-                    error: true,
-                    statusCode: 403,
-                    message: 'RT invalid or expired',
-                    data: null,
-                };
-            }
-
-            const newAccessToken = tokenUtil.genAccessToken(userId);
-            return {
-                error: false,
-                statusCode: 200,
-                message: 'Renewed access token',
-                data: { accessToken: newAccessToken },
-            };
-        }
-    );
+    const newAccessToken = tokenUtil.genAccessToken(userId);
+    return {
+        error: false,
+        statusCode: 200,
+        message: 'Renewed access token',
+        data: { accessToken: newAccessToken },
+    };
 };
 
 exports.getUserData = async (userId) => {
@@ -293,12 +261,7 @@ exports.handleSocialLogin = async (req, res, provider) => {
             const refreshToken = tokenUtil.genRefreshToken();
             redisUtil.storeRefreshToken(newUserDetails.userId, refreshToken);
 
-            return responseUtil.generateAuthResponse(
-                res,
-                201,
-                accessToken,
-                newUserDetails
-            );
+            return responseUtil.generateAuthResponse(res, 201, accessToken, newUserDetails);
         }
 
         const accessToken = tokenUtil.genAccessToken(user.userId);
