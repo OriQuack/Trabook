@@ -3,7 +3,7 @@ const redisUtil = require('../utils/redisUtil');
 
 const authenticate = async (req, res, next) => {
     console.log(req.headers);
-    const userId = req.headers['userId'];
+    const userId = req.headers['userid'];
     const user = await User.getUserByUserId(userId);
     if (!user) {
         return res.status(404).json({ message: 'User not found' });
