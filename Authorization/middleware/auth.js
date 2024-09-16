@@ -10,10 +10,8 @@ const authenticate = async (req, res, next) => {
     }
 
     const refreshToken = await redisUtil.getRefreshToken(userId);
-    console.log(refreshToken);
-    console.log(refreshToken.split(':')[1]);
     if (!refreshToken) {
-        return res.status(403).json({ message: 'RT invalid or expired1' });
+        return res.status(403).json({ message: 'RT invalid or expired' });
     }
 
     return jwt.verify(
@@ -28,7 +26,7 @@ const authenticate = async (req, res, next) => {
         },
         async (err, refreshDecoded) => {
             if (err) {
-                return res.status(403).json({ message: 'RT invalid or expired2' });
+                return res.status(403).json({ message: 'RT invalid or expired' });
             }
             req.user = new User(user);
             return next();
