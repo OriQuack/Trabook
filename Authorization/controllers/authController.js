@@ -152,7 +152,7 @@ exports.postNaverLogin = (req, res) => {
     authService.handleSocialLogin(req, res, 'Naver');
 };
 
-const tokenUtil = require('../utils/tokenUtil');
+const jwt = require('jsonwebtoken');
 exports.postTestToken = async (req, res) => {
     try {
         const payload = { userId: '12345' };
