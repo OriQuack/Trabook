@@ -155,7 +155,7 @@ exports.postNaverLogin = (req, res) => {
 const jwt = require('jsonwebtoken');
 exports.postTestToken = async (req, res) => {
     try {
-        const payload = { userId: '12345' };
+        const payload = { userId: '19' };
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: '10s', // WILL CHANGE
             notBefore: '0',
