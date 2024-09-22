@@ -155,7 +155,14 @@ exports.postNaverLogin = (req, res) => {
 const tokenUtil = require('../utils/tokenUtil');
 exports.postTestToken = async (req, res) => {
     try {
-        const accessToken = tokenUtil.genAccessToken('12345');
+        const payload = { userId: '12345' };
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '10s', // WILL CHANGE
+            notBefore: '0',
+            algorithm: 'HS256',
+            // issuer
+            // audience
+        });
         const fooResponse = {
             error: false,
             statusCode: 200,
