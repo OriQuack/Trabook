@@ -169,7 +169,7 @@ exports.postTestToken = async (req, res) => {
             message: 'Login successful',
             data: {
                 user: {
-                    userId: '12345',
+                    userId: '19',
                     username: 'test username',
                     image: 'testProfile.com',
                     status_message: 'test status message',
