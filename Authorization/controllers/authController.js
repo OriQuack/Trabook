@@ -115,7 +115,7 @@ exports.deleteUserData = async (req, res, next) => {
 exports.getNewAccessToken = async (req, res, next) => {
     try {
         const userId = req.user.userId;
-        const { error, statusCode, message, data } = await authService.renewToken(req.user);
+        const { error, statusCode, message, data } = await authService.renewToken(userId);
         if (error) {
             return sendErrorResponse(res, statusCode, message);
         }
