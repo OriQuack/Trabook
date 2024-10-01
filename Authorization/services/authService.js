@@ -103,10 +103,9 @@ exports.sendVerificationCode = async (email) => {
 
 exports.verifyCode = async (email, code) => {
     const storedCode = await redisUtil.getEmailVerificationCode(email);
-    if (!storedCode || storedCode !== code) {
+    if (!storedCode || storedCode != code) {
         return { error: true, statusCode: 400, message: 'Invalid code', data: null };
     }
-    await redisUtil.del(email);
     return { error: false, statusCode: 200, message: 'Code verified successfully', data: null };
 };
 
