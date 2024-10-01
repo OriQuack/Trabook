@@ -11,7 +11,7 @@ router.post('/send-verify-email', authController.postSendVerificationCode);
 router.post('/verify-code', authController.postVerifyCode);
 router.post('/update-profile', authenticate, uploadImage, authController.postUpdateProfile);
 router.post('/update-password', authenticate, authController.postUpdatePassword);
-router.delete('/delete-user', authenticate, authController.deleteUserData);
+router.delete('/signtout', authenticate, authController.deleteUserData);
 router.get('/renew-token', authenticate, authController.getNewAccessToken);
 router.get('/fetch-user', authController.getUserData);
 router.post('/google-login', authController.postGoogleLogin);
