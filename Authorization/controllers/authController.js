@@ -141,7 +141,7 @@ exports.getUserData = async (req, res, next) => {
 };
 
 exports.getUsersData = async (req, res, next) => {
-    const { userIdList } = req.body;
+    const { userIdList } = req.query;
     try {
         const { error, statusCode, message, data } = await authService.getUsersData(userIdList);
         if (error) {
