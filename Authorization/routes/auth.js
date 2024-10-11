@@ -14,6 +14,7 @@ router.post('/update-password', authenticate, authController.postUpdatePassword)
 router.delete('/signout', authenticate, authController.deleteUserData);
 router.get('/renew-token', authenticate, authController.getNewAccessToken);
 router.get('/fetch-user', authController.getUserData);
+router.get('/fetch-users', authController.getUsersData);
 router.post('/google-login', authController.postGoogleLogin);
 router.post('/kakao-login', authController.postKakaoAuth);
 router.post('/naver-login', authController.postNaverLogin);

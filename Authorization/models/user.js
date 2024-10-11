@@ -127,6 +127,50 @@ class User {
             throw new Error('Could not retrieve user by userId');
         }
     }
+
+    static async getUsersByUserIds(userIds) {
+        try {
+            if (!Array.isArray(userIds) || userIds.length === 0) {
+                throw new Error('Input must be a non-empty array of user IDs');
+            }
+
+            const placeholders = userIds.map(() => '?').join(', ');
+            const query = `
+                SELECT userId, username, email, password, statusMessage, profilePhoto
+                FROM User
+                WHERE userId IN (${placeholders})
+            `;
+            const [rows] = await db.query(query, userIds);
+
+            if (rows.length === 0) {
+                return [];
+            }
+
+            const userMap = new Map();
+            rows.forEach((row) => {
+                userMap.set(
+                    row.userId,
+                    new User({
+                        userId: row.userId,
+                        username: row.username,
+                        email: row.email,
+                        password: row.password,
+                        statusMessage: row.statusMessage,
+                        profilePhoto: row.profilePhoto,
+                    })
+                );
+            });
+
+            const users = userIds
+                .map((id) => userMap.get(id) || null)
+                .filter((user) => user !== null);
+
+            return users;
+        } catch (err) {
+            console.error('Error retrieving users by userIds:', err.message);
+            throw new Error('Could not retrieve users by userIds');
+        }
+    }
 }
 
 module.exports = User;

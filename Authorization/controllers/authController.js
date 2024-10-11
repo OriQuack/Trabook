@@ -140,6 +140,20 @@ exports.getUserData = async (req, res, next) => {
     }
 };
 
+exports.getUsersData = async (req, res, next) => {
+    const { userIdList } = req.body;
+    try {
+        const { error, statusCode, message, data } = await authService.getUsersData(userIdList);
+        if (error) {
+            return sendErrorResponse(res, statusCode, message);
+        }
+        const { users } = data;
+        return res.status(200).json({ users: users });
+    } catch (error) {
+        return sendErrorResponse(res, 500, 'Server error');
+    }
+};
+
 exports.postGoogleLogin = (req, res) => {
     authService.handleSocialLogin(req, res, 'Google');
 };

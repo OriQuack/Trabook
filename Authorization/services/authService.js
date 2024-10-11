@@ -241,6 +241,32 @@ exports.getUserData = async (userId) => {
     };
 };
 
+exports.getUsersData = async (userIdList) => {
+    userIdList = Array.isArray(userIdList)
+        ? userIdList
+        : userIdList.split(',').map((id) => id.trim());
+    const users = await User.getUsersByUserIds(userIdList);
+    if (!users || users.length === 0) {
+        return { error: true, statusCode: 404, message: 'Users not found', data: null };
+    }
+
+    const usersData = users.map((user) => ({
+        userId: user.userId,
+        username: user.username,
+        image: user.profilePhoto,
+        status_message: user.statusMessage,
+    }));
+
+    return {
+        error: false,
+        statusCode: 200,
+        message: 'Fetch successful',
+        data: {
+            users: usersData,
+        },
+    };
+};
+
 exports.handleSocialLogin = async (req, res, provider) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
