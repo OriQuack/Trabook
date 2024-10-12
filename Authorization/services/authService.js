@@ -242,9 +242,10 @@ exports.getUserData = async (userId) => {
 };
 
 exports.getUsersData = async (userIdList) => {
-    userIdList = Array.isArray(userIdList)
-        ? userIdList
-        : userIdList.split(',').map((id) => parseInt(id, 10));
+    if (!userIdList) {
+        return { error: true, statusCode: 400, message: 'Bad request', data: null };
+    }
+    userIdList = userIdList.split(',').map((id) => parseInt(id, 10));
     const users = await User.getUsersByUserIds(userIdList);
     if (!users || users.length === 0) {
         return { error: true, statusCode: 404, message: 'Users not found', data: null };
